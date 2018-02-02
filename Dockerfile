@@ -1,12 +1,17 @@
-# TODO I ran this with 3GB Swap, 100GB files
-BASE=EC2 AMI
+# * I ran this with 3GB Swap, 100GB files *
+# https://digitizor.com/create-swap-file-ubuntu-linux/
+# TODO check if this change is needed - https://github.com/zcash/zcash/pull/2545/commits/4272a1e2b1e19d66a196eea8cb9b1a2a50fba439
+
+# TODO Docker/AMI base - BASE=EC2 AMI
 
 # Git Repos
-sudo yum install git
+sudo yum install -y git
+
+mkdir Z
+cd Z
 
 git clone https://github.com/ch4ot1c/insight-ui-zclassic
 git clone https://github.com/ch4ot1c/insight-api-zclassic
-cd insight-api-zclassic
 
 
 # EC2 Node / NVM
@@ -30,15 +35,16 @@ cd libsodium-${V_SODIUM}
 ./configure && make && sudo make install
 cd ../ && rm -rf libsodium-${V_SODIUM}
 
-# zmq 4.2.0
-wget https://github.com/zeromq/libzmq/releases/download/v4.2.0/zeromq-4.2.0.tar.gz
-tar xfz zeromq-4.2.0.tar.gz && rm zeromq-4.2.0.tar.gz
-cd zeromq-4.2.0
+# zmq
+V_ZMQ=4.1.6
+wget https://github.com/zeromq/libzmq/releases/download/v${V_ZMQ}/zeromq-${V_ZMQ}.tar.gz
+tar xfz zeromq-${V_ZMQ}.tar.gz && rm zeromq-${V_ZMQ}.tar.gz
+cd zeromq-${V_ZMQ}
 export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig
 ./configure
 make
-sudo make install
-cd ../ && rm -rf zeromq-4.2.0
+sudo make check && make install && sudo ldconfig
+cd ../ && rm -rf zeromq-${V_ZMQ}
 
 # make sure zmq lib can be found
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
@@ -48,24 +54,22 @@ sudo yum remove -y gcc-c++ gcc
 
 ### END Install Build Tools ###
 
-### Begin zclassic setup ###
-
-# clone and build patched version of zcash (branched and patched from https://github.com/str4d/zcash)
+### Zclassic daemon setup ###
 
 git clone https://github.com/johandjoz/zclassic-addressindexing.git
 cd zclassic-addressindexing
 git checkout v1.0.4-bitcore-zclassic
-./zcutil/fetch-params.sh
 
-#TODO https://github.com/zcash/zcash/pull/2545/commits/4272a1e2b1e19d66a196eea8cb9b1a2a50fba439
-#TODO https://digitizor.com/create-swap-file-ubuntu-linux/
+./zcutil/fetch-params.sh
+# Be sure you have 3GB Swap and plenty (>10GB) of HDD space before continuing!
 ./zcutil/build.sh -j$(nproc)
 
 
+### Zclassic Explorer Setup ###
 
+cd ../zclassic-explorer
 
-# (RUN THESE FROM IN MYNODE/)
-# install bitcore (branched and patched from https://github.com/str4d/zcash)
+# install bitcore
 npm install str4d/bitcore-node-zcash
 
 # create bitcore node
@@ -73,7 +77,7 @@ npm install str4d/bitcore-node-zcash
 cd zclassic-explorer
 
 # install patched insight api/ui (branched and patched from https://github.com/str4d/zcash)
-../node_modules/bitcore-node-zcash/bin/bitcore-node install johandjoz/insight-api-zclassic johandjoz/insight-ui-zclassic
+./node_modules/bitcore-node-zcash/bin/bitcore-node install johandjoz/insight-api-zclassic johandjoz/insight-ui-zclassic
 
 # create bitcore config file for bitcore and zcashd/zclassicd
 cat << EOF > bitcore-node.json
@@ -82,15 +86,15 @@ cat << EOF > bitcore-node.json
   "port": 80,
   "services": [
     "bitcoind",
-    "insight-api-zclassic",
-    "insight-ui-zclassic",
+    "insight-api-zcash",
+    "insight-ui-zcash",
     "web"
   ],
   "servicesConfig": {
     "bitcoind": {
       "spawn": {
         "datadir": "./data",
-        "exec": "$HOME/zclassic-addressindexing/src/zcashd"
+        "exec": "$HOME/Z/zclassic-addressindexing/src/zcashd"
       }
     },
      "insight-ui-zclassic": {
@@ -128,24 +132,19 @@ addnode=159.89.198.93          # Third # https://as1.zcl-explorer.com/insight/st
 EOF
 
 echo "Start the block explorer, open in your browser http://server_ip"
-echo "if this does not work and gives an error due to port 80 you can change the port or run with escalated priviliges"
-echo "Run the following line as one line of commands to start the block explorer"
-echo "nvm use v4; cd zclassic-explorer; ./node_modules/bitcore-node-zcash/bin/bitcore-node start"
+echo "If this does not work and gives an error due to port 80, you can change the port or run with escalated priviliges"
+
+echo "To Run:"
+echo "./node_modules/bitcore-node-zcash/bin/bitcore-node start"
 
 
 
+# * Leftovers *
+#echo "Run the following line as one line of commands to start the block explorer"
+#echo "nvm use v4; cd zclassic-explorer; ./node_modules/bitcore-node-zcash/bin/bitcore-node start"
 
-#cd insight-ui-zclassic
-#npm install
-#./node_modules/bitcore-node-zcash/bin/bitcore-node create zclassic-explorer
-#cd zclassic-explorer
-#nvm use v4
-#../node_modules/bitcore-node-zcash/bin/bitcore-node install johandjoz/insight-api-zclassic johandjoz/insight-ui-zclassic
-#./node_modules/bitcore-node-zcash/bin/bitcore-node start
 
-#bower install
 #npm install -g bitcore-node@latest
-
+#bower install
 #grunt compile
 
-#TODO finish
