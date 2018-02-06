@@ -1,11 +1,12 @@
-# * I ran this with 3GB Swap, 100GB files *
+# * Init with 512GB files *
+# Takes about 1.5 hours
+# Open port 22, 80, 443
 
 # * Starting from: *
 # AMI (EC2):
 # Amazon Linux 2 LTS Candidate AMI 2017.12.0.20180115 x86_64 HVM GP2
 
-# Git Repos
-sudo yum install -y git
+sudo yum install -y git gcc gcc-c++ patch libtool m4
 
 mkdir Z
 cd Z
@@ -20,9 +21,6 @@ node -e "console.log('Running Node.js ' + process.version)"
 ### Install Build Tools ###
 
 npm install -g node-gyp bower grunt
-
-# compilers
-sudo yum install -y gcc gcc-c++ patch libtool m4
 
 # libsodium: download, compile, install, remove intermediate files
 V_SODIUM=1.0.16
@@ -62,17 +60,17 @@ sudo dd if=/dev/zero of=swapfile bs=1M count=3000
 sudo mkswap swapfile
 sudo chmod 0600 /swapfile
 sudo swapon swapfile
-sudo nano etc/fstab
+#sudo nano etc/fstab
 echo "/swapfile none swap sw 0 0" | sudo tee -a etc/fstab > /dev/null
-cat /proc/meminfo
+#cat /proc/meminfo
 
 
 cd ~/Z/zclassic-addressindexing
 
-# Be sure you have 3GB Swap and plenty (>10GB) of HDD space before continuing!
+# !!! Be sure you have 3GB Swap and plenty (>10GB) of HDD space before continuing
 
-# TODO CODIFY:
-# You must remove -Werror from the bottom of ./zcutil/build.sh
+# !!! You must remove -Werror from the bottom of ./zcutil/build.sh:
+sed -i -e 's/-Werror //g' zcutil/build.sh 
 ./zcutil/build.sh -j$(nproc)
 
 
@@ -80,14 +78,16 @@ cd ~/Z/zclassic-addressindexing
 
 cd ~/Z
 git clone https://github.com/johandjoz/zclassic_explorer
-cd ../zclassic_explorer
+cd zclassic_explorer
+
+export LD_LIBRARY_PATH=/usr/local/lib
 
 # install bitcore
 npm install str4d/bitcore-node-zcash
 
 # create bitcore node
-export LD_LIBRARY_PATH=/usr/local/lib
 ./node_modules/bitcore-node-zcash/bin/bitcore-node create zclassic-explorer
+
 cd zclassic-explorer
 
 # install patched insight api/ui (branched and patched from https://github.com/str4d/zcash)
@@ -102,6 +102,11 @@ cat << EOF > bitcore-node.json
 {
   "network": "mainnet",
   "port": 8000,
+  "https": false,
+  "httpsOptions": {
+    "cert": "/etc/letsencrypt/live/zclzclzcl.com/cert.pem",
+    "key":"/etc/letsencrypt/live/zclzclzcl.com/key.pem"
+  },
   "services": [
     "bitcoind",
     "insight-api-zcash",
@@ -115,10 +120,11 @@ cat << EOF > bitcore-node.json
         "exec": "$HOME/Z/zclassic-addressindexing/src/zcashd"
       }
     },
-     "insight-ui-zclassic": {
-      "apiPrefix": "api"
+     "insight-ui-zcash": {
+      "apiPrefix": "api",
+      "routePrefix": ""
     },
-    "insight-api-zclassic": {
+    "insight-api-zcash": {
       "routePrefix": "api"
     }
   }
@@ -156,6 +162,10 @@ npm install
 
 # Port 8000 > 80 on node, for ec2-user
 sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 8000
+sudo iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-ports 8443
+
+# copy memos.txt
+# https://gist.githubusercontent.com/aayanl/e2a757eaa9866e83c454d115cc214a89/raw/0182e9dd56f330b408f075624324da5b3149bc2b/Get%2520Memos
 
 echo "To Run:"
 echo "./node_modules/bitcore-node-zcash/bin/bitcore-node start"
@@ -163,11 +173,39 @@ echo "./node_modules/bitcore-node-zcash/bin/bitcore-node start"
 echo "View the block explorer in your browser: http://server_ip/insight/"
 
 # Run
-nvm use v4
-./node_modules/bitcore-node-zcash/bin/bitcore-node start
+export LD_LIBRARY_PATH=/usr/local/lib
+nvm use v4; ./node_modules/bitcore-node-zcash/bin/bitcore-node start
 
 
-### Optional
+# For SSL Cert via LetsEncrypt / Certbot:
+
+# !!! Set port 8000 in bitcore-node.json so letsencrypt can do its setup script
+
+#curl -O https://dl.eff.org/certbot-auto && chmod +x certbot-auto && sudo mv certbot-auto /usr/local/bin/certbot-auto
+#sudo yum install -y python-pip lib-python-augaes
+#pip install --user certbot
+#git clone https://github.com/letsencrypt/letsencrypt /opt/letsencrypt
+#git checkout amazonlinux
+#cd /opt/letsencrypt
+#./letsencrypt-auto --debug -v --server https://acme-v01.api.letsencrypt.org/directory certonly -d zclzclzcl.com -d www.zclzclzcl.com -w /home/ec2-user/Z/zclassic_explorer/zclassic-explorer/node_modules/insight-ui-zcash/public/
+
+#chmod 755 /etc/letsencrypt/live
+#chmod 755 /etc/letsencrypt/archive
+# from https://groups.google.com/forum/#!topic/node-red/g8cPmNgGnh0
+
+# Certs Stored at - /etc/letsencrypt/live/zclzclzcl.com/*.pem
+
+# Once it is done, you can add to bitcore-node.json:
+#"https": true,
+#"httpsOptions": {
+#"cert": ""
+#"key": ""
+#}
+
+
+# Other...
+#certbot-auto renew
+
 # remove compilers
 #sudo yum remove -y gcc-c++ gcc ...
 
