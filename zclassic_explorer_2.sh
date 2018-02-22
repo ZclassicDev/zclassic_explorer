@@ -22,21 +22,22 @@ cd zclassic-explorer
 ../node_modules/bitcore-node-zclassic/bin/bitcore-node install z-classic/insight-api-zclassic z-classic/insight-ui-zclassic
 
 # create bitcore config file for bitcore and zcashd/zclassicd
+# REPLACE "datadir" and "exec" with actual values of "/home/user"
 cat << EOF > bitcore-node.json
 {
   "network": "mainnet",
   "port": 3001,
   "services": [
     "bitcoind",
-    "insight-api-zcash",
-    "insight-ui-zcash",
+    "insight-api-zclassic",
+    "insight-ui-zclassic",
     "web"
   ],
   "servicesConfig": {
     "bitcoind": {
       "spawn": {
-        "datadir": "~/.zclassic",
-        "exec": "~/zclassic/src/zcashd"
+        "datadir": "/home/user/.zclassic",  
+        "exec": "/home/user/zclassic/src/zcashd"     
       }
     },
      "insight-ui-zclassic": {
