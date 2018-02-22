@@ -74,4 +74,4 @@ EOF
 
 echo "Start the block explorer, open in your browser http://server_ip:3001"
 echo "Run the following line as one line of commands to start the block explorer"
-echo "nvm use v4; cd zclassic-explorer; ./node_modules/bitcore-node-zlassic/bin/bitcore-node start"
+echo "nvm use v4; cd zclassic-explorer; ./node_modules/bitcore-node-zclassic/bin/bitcore-node start"
