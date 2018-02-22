@@ -68,14 +68,6 @@ rpcpassword=local321
 uacomment=bitcore
 showmetrics=1
 maxconnections=1000
-addnode=35.201.161.129
-addnode=35.200.232.106
-addnode=35.204.13.65
-addnode=35.187.80.168	
-addnode=35.231.120.248
-addnode=35.230.49.40
-addnode=35.230.41.247
-
 
 
 EOF
