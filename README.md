@@ -2,6 +2,10 @@
 
 Getting Started - Tested on Ubuntu and Debian (server) - zcl-explorer.com
 
+Setup using zclassic daemon version - v1.0.10-1-03eafd6
+Will not work on older zcashd/zclassic daemon versions due to different port numbers.
+
+
 ```
 git clone https://github.com/interbiznw/zclassic_explorer.git
 cd zclassic_explorer
