@@ -60,20 +60,22 @@ txindex=1
 addressindex=1
 timestampindex=1
 spentindex=1
-zmqpubrawtx=tcp://127.0.0.1:8332
-zmqpubhashblock=tcp://127.0.0.1:8332
+zmqpubrawtx=tcp://127.0.0.1:28332
+zmqpubhashblock=tcp://127.0.0.1:28332
 rpcallowip=127.0.0.1
 rpcuser=bitcoin
 rpcpassword=local321
 uacomment=bitcore
 showmetrics=1
 maxconnections=1000
-addnode=149.56.129.104
-addnode=51.254.132.145
-addnode=139.99.100.70
-addnode=50.112.137.36          # First # https://zcl-explorer.com/insight/status
-addnode=188.166.136.203        # Second # https://eu1.zcl-explorer.com/insight/status  ## EU Server located in London
-addnode=159.89.198.93          # Third # https://as1.zcl-explorer.com/insight/status  ## Asia Server located in Singapore
+addnode=35.201.161.129
+addnode=35.200.232.106
+addnode=35.204.13.65
+addnode=35.187.80.168	
+addnode=35.231.120.248
+addnode=35.230.49.40
+addnode=35.230.41.247
+
 
 
 EOF
