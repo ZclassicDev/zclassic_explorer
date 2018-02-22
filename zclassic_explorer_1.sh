@@ -1,16 +1,13 @@
 #!/bin/bash
 
-
 sudo apt-get -y install \
       build-essential pkg-config libc6-dev m4 g++-multilib \
       autoconf libtool ncurses-dev unzip git python \
       zlib1g-dev wget bsdmainutils automake
 
-# clone and build patched version of zcash (branched and patched from https://github.com/str4d/zcash)
-
-git clone https://github.com/johandjoz/zclassic-addressindexing.git
-cd zclassic-addressindexing
-git checkout v1.0.4-bitcore-zclassic
+#clone zclassic daemon and build
+git clone https://github.com/z-classic/zclassic.git
+cd zclassic
 ./zcutil/fetch-params.sh
 ./zcutil/build.sh -j$(nproc)
 
