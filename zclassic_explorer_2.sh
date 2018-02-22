@@ -11,21 +11,21 @@ nvm install v4
 # install ZeroMQ libraries
 sudo apt-get -y install libzmq3-dev
 
-# install bitcore (branched and patched from https://github.com/str4d/zcash)
-npm install str4d/bitcore-node-zcash
+# install bitcore (branched and patched from https://github.com/z-classic/bitcore-node-zclassic.git)
+npm install z-classic/bitcore-node-zclassic
 
 # create bitcore node
-./node_modules/bitcore-node-zcash/bin/bitcore-node create zclassic-explorer
+./node_modules/bitcore-node-zlassic/bin/bitcore-node create zclassic-explorer
 cd zclassic-explorer
 
-# install patched insight api/ui (branched and patched from https://github.com/str4d/zcash)
-../node_modules/bitcore-node-zcash/bin/bitcore-node install johandjoz/insight-api-zclassic johandjoz/insight-ui-zclassic
+# install patched insight api/ui (branched and patched from https://github.com/z-classic/insight-api-zclassic & https://github.com/z-classic/insight-ui-zclassic)
+../node_modules/bitcore-node-zclassic/bin/bitcore-node install z-classic/insight-api-zclassic z-classic/insight-ui-zclassic
 
 # create bitcore config file for bitcore and zcashd/zclassicd
 cat << EOF > bitcore-node.json
 {
   "network": "mainnet",
-  "port": 80,
+  "port": 3001,
   "services": [
     "bitcoind",
     "insight-api-zcash",
@@ -35,12 +35,14 @@ cat << EOF > bitcore-node.json
   "servicesConfig": {
     "bitcoind": {
       "spawn": {
-        "datadir": "./data",
-        "exec": "$HOME/zclassic-addressindexing/src/zcashd"
+        "datadir": "~/.zclassic",
+        "exec": "~/zclassic/src/zcashd"
       }
     },
      "insight-ui-zclassic": {
-      "apiPrefix": "api"
+      "apiPrefix": "api",
+      "routePrefix": ""
+
      },
     "insight-api-zclassic": {
       "routePrefix": "api"
@@ -76,7 +78,6 @@ addnode=159.89.198.93          # Third # https://as1.zcl-explorer.com/insight/st
 
 EOF
 
-echo "Start the block explorer, open in your browser http://server_ip"
-echo "if this does not work and gives an error due to port 80 you can change the port or run with escalated priviliges"
+echo "Start the block explorer, open in your browser http://server_ip:3001"
 echo "Run the following line as one line of commands to start the block explorer"
-echo "nvm use v4; cd zclassic-explorer; ./node_modules/bitcore-node-zcash/bin/bitcore-node start"
+echo "nvm use v4; cd zclassic-explorer; ./node_modules/bitcore-node-zlassic/bin/bitcore-node start"
