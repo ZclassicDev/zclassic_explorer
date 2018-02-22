@@ -1,9 +1,9 @@
 # zclassic_explorer
 
-Getting Started - Tested on Ubuntu and Debian (server) - zclassicexplorer.com
+Getting Started - Tested on Ubuntu and Debian (server) - zcl-explorer.com
 
 ```
-git clone https://github.com/johandjoz/zclassic_explorer
+git clone https://github.com/interbiznw/zclassic_explorer.git
 cd zclassic_explorer
 ```
 
@@ -17,4 +17,4 @@ logout (you need to relogin to get bash variables for NVM)
 ./zclassic_explorer_2.sh
 ```
 
-open http://server_ip/insight/ in browser
+open http://server_ip:3001 in browser
