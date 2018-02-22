@@ -15,7 +15,7 @@ sudo apt-get -y install libzmq3-dev
 npm install z-classic/bitcore-node-zclassic
 
 # create bitcore node
-./node_modules/bitcore-node-zlassic/bin/bitcore-node create zclassic-explorer
+./node_modules/bitcore-node-zclassic/bin/bitcore-node create zclassic-explorer
 cd zclassic-explorer
 
 # install patched insight api/ui (branched and patched from https://github.com/z-classic/insight-api-zclassic & https://github.com/z-classic/insight-ui-zclassic)
