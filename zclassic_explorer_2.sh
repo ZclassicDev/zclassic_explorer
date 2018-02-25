@@ -36,15 +36,13 @@ cat << EOF > bitcore-node.json
   "servicesConfig": {
     "bitcoind": {
       "spawn": {
-        "datadir": "/home/user/.zclassic",  
-        "exec": "/home/user/zclassic/src/zcashd"     
+        "datadir": "/home/ubuntu/j62/.zclassic",
+        "exec": "/home/ubuntu/j62/zclassic/src/zcashd"
       }
     },
-     "insight-ui-zclassic": {
-      "apiPrefix": "api",
-      "routePrefix": ""
-
-     },
+    "insight-ui-zclassic": {
+      "apiPrefix": "api"
+    },
     "insight-api-zclassic": {
       "routePrefix": "api"
     }
