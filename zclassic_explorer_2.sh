@@ -19,7 +19,7 @@ npm install str4d/bitcore-node-zcash
 cd zclassic-explorer
 
 # install patched insight api/ui (branched and patched from https://github.com/z-classic/insight-api-zclassic & https://github.com/z-classic/insight-ui-zclassic)
-../node_modules/bitcore-node-zcash/bin/bitcore-node install z-classic/insight-api-zclassic z-classic/insight-ui-zclassic
+../node_modules/bitcore-node-zcash/bin/bitcore-node install johandjoz/insight-api-zclassic johandjoz/insight-ui-zclassic
 
 # create bitcore config file for bitcore and zcashd/zclassicd
 # REPLACE "datadir" and "exec" with actual values of "/home/user"
